@@ -31,3 +31,6 @@ Thumbs.db
 # local tooling
 .claude/
 .dc/
+
+# project report PDF stays local (rebuild: python scripts/build_report.py)
+reports/*.pdf
