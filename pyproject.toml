@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "upliftlab"
+version = "0.1.0"
+description = "Who Will Respond? Uplift modeling for targeted offers"
+requires-python = ">=3.10,<3.13"
+# Runtime deps live in requirements.txt; this file only makes `src/upliftlab`
+# importable everywhere via `pip install -e .`
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,36 @@
+# Python 3.11 (64-bit) — causalml/econml ship Windows wheels for 3.11; avoid 3.13.
+# Ranges chosen so causalml, econml and scikit-uplift resolve together on Windows.
+
+# --- core numerics ---
+numpy>=1.26,<2.0          # causalml/econml compiled extensions are safest on numpy 1.x
+pandas>=2.1,<2.3
+scipy>=1.11,<1.15
+scikit-learn>=1.3,<1.7    # econml caps sklearn
+
+# --- models ---
+lightgbm>=4.3,<5
+scikit-uplift==0.5.1      # import name: sklift (datasets, metrics, plots)
+causalml>=0.15.1,<0.16    # uplift trees / forests, meta-learners
+econml>=0.15.1,<0.17      # causal forest, DML / R-learner (also caps shap)
+
+# --- explainability ---
+shap>=0.42                # upper bound comes from econml
+
+# --- viz ---
+matplotlib>=3.8
+seaborn>=0.13
+plotly>=5.20
+
+# --- tracking + app ---
+mlflow>=2.12,<3
+streamlit>=1.35
+
+# --- utilities ---
+pyyaml>=6.0
+joblib>=1.3
+tqdm>=4.66
+
+# --- dev / notebooks ---
+jupyter>=1.0
+ipykernel>=6.29
+pytest>=8.0

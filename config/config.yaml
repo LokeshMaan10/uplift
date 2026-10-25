@@ -1,0 +1,96 @@
+# =====================================================================
+# Central configuration for the "Who Will Respond?" uplift project.
+# Every script / notebook / the Streamlit app reads from here, so you
+# change a number once and the whole project follows.
+# Paths are relative to the project root.
+# =====================================================================
+
+project:
+  name: who-will-respond
+  seed: 42                      # one seed to rule them all (reproducibility)
+
+paths:
+  data_raw: data/raw            # sklift downloads datasets here (cached)
+  data_processed: data/processed
+  models: models                # saved fitted models (joblib)
+  figures: reports/figures      # plots for the report / README
+  tables: reports/tables        # CSV result tables
+  mlruns: mlruns                # local MLflow store
+
+data:
+  hillstrom:
+    # Hillstrom has 3 arms: "Mens E-Mail", "Womens E-Mail", "No E-Mail".
+    # We model a binary treatment. Options:
+    #   any_email   -> treated = Mens OR Womens, control = No E-Mail
+    #   womens      -> treated = Womens, control = No E-Mail (Mens dropped)
+    #   mens        -> treated = Mens,   control = No E-Mail (Womens dropped)
+    treatment_mode: womens
+    # Outcome: "visit" (~15% base rate, good signal) or "conversion" (~1%, very sparse)
+    target: visit
+  criteo:
+    # sklift's fetch_criteo S3 links return 404 (checked Oct 2026), so we download the
+    # same official file from Criteo's public Hugging Face repo (no account/key needed).
+    url: https://huggingface.co/datasets/criteo/criteo-uplift/resolve/main/criteo-research-uplift-v2.1.csv.gz
+    sample_rows: 500000         # random sample, read in chunks -> never holds 14M rows in RAM
+    target: visit               # "visit" or "conversion"
+  x5:
+    enabled: false              # optional second domain (Module 10 extra)
+
+split:
+  test_size: 0.3                # held-out test set, never touched during tuning
+  cv_folds: 5                   # stratified on treatment x outcome
+  stratify_on_treatment_and_target: true
+
+lightgbm:                       # shared base learner for meta-learners
+  # Chosen by 5-fold CV Qini on the training set (scripts/tune_lightgbm.py):
+  # heavy regularisation wins because the uplift signal is weak and noisy.
+  n_estimators: 150
+  learning_rate: 0.03
+  num_leaves: 7
+  min_child_samples: 400
+  subsample: 0.8
+  subsample_freq: 1
+  colsample_bytree: 0.8
+  reg_lambda: 1.0
+  verbose: -1
+
+uplift_rf:                      # causalml UpliftRandomForestClassifier
+  n_estimators: 100
+  max_depth: 6
+  min_samples_leaf: 200
+  min_samples_treatment: 50
+  evaluationFunction: KL        # split criterion: KL divergence between treated/control
+  n_reg: 100
+
+causal_forest:                  # econml CausalForestDML
+  n_estimators: 300
+  min_samples_leaf: 50
+  max_depth: 8
+  cv: 3                         # cross-fitting folds for the nuisance models
+
+segments:                       # how predicted customers are labelled (Module 9 / app)
+  persuadable_quantile: 0.70    # top 30% predicted uplift = Persuadable
+  sleeping_dog_uplift: 0.0      # predicted uplift below this = Sleeping Dog
+  sure_thing_quantile: 0.50     # baseline P(respond | no offer) above median = Sure Thing
+
+robustness:
+  seeds: [0, 1, 2, 3, 4]
+  criteo_models: [Random, Response model, S-learner, T-learner, X-learner, R-learner, Class transformation]
+
+evaluation:
+  top_k_percents: [10, 20, 30, 50]
+  n_bins: 10                    # deciles for the uplift-by-decile table
+  bootstrap_iterations: 500     # bootstrap CIs on the main metric
+  main_metric: qini_auc
+
+business:
+  # Bank-offer framing. All values are configurable in the dashboard too.
+  currency: "USD"
+  cost_per_offer: 1.0           # cost of sending one offer (print, call-centre, incentive)
+  value_per_response: 30.0      # profit from one incremental response
+  population_size: 100000       # customers we'd score in a real campaign
+  target_percents: [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+mlflow:
+  tracking_uri: "file:./mlruns"
+  experiment_name: uplift-hillstrom

@@ -1,0 +1,61 @@
+{
+  "deploy_model": "S-learner",
+  "best_model": "Uplift RF (KL)",
+  "features": [
+    "recency",
+    "history",
+    "mens",
+    "womens",
+    "newbie",
+    "zip_code_Rural",
+    "zip_code_Surburban",
+    "zip_code_Urban",
+    "channel_Multichannel",
+    "channel_Phone",
+    "channel_Web"
+  ],
+  "numeric_ranges": {
+    "recency": [
+      1.0,
+      12.0,
+      6.0
+    ],
+    "history": [
+      29.99,
+      3345.93,
+      158.27
+    ]
+  },
+  "ate": 0.0451138658360357,
+  "segment_thresholds": {
+    "persuadable_uplift": 0.06026813311579399,
+    "sleeping_dog_uplift": 0.0,
+    "sure_thing_baseline": 0.10315075726367966
+  },
+  "business_defaults": {
+    "currency": "USD",
+    "cost_per_offer": 1.0,
+    "value_per_response": 30.0,
+    "population_size": 100000,
+    "target_percents": [
+      5,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90,
+      100
+    ]
+  },
+  "data": {
+    "treatment_mode": "womens",
+    "target": "visit"
+  },
+  "n_train": 29885,
+  "n_test": 12808,
+  "surrogate_r2_test": 0.9811416363483662
+}
