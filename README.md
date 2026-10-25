@@ -12,7 +12,7 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-dashboard-FF4B4B?logo=streamlit&logoColor=white)
 ![Cost](https://img.shields.io/badge/cost-%240%20%C2%B7%20no%20API%20keys-success)
 
-**[Live demo](#-run-it)** · **[How it works](#-architecture)** · **[Results](#-key-results)** · **[Interview kit](docs/INTERVIEW.md)**
+**[Live demo](#-run-it)** · **[How it works](#-architecture)** · **[Results](#-key-results)** · **[📄 Full report (PDF)](reports/Uplift_Modeling_Report.pdf)** · **[Interview kit](docs/INTERVIEW.md)**
 
 </div>
 
@@ -168,6 +168,7 @@ python scripts/run_eda.py          # data + randomization checks
 python scripts/run_pipeline.py     # train, evaluate, ROI, MLflow  (~8 min, --fast skips uplift RF)
 python scripts/run_explain.py      # SHAP + segments
 python scripts/run_robustness.py   # seeds, men's arm, Criteo (downloads 311 MB once)
+python scripts/build_report.py     # 15-page PDF report from the result tables
 
 streamlit run app/streamlit_app.py
 mlflow ui --backend-store-uri mlruns
@@ -186,7 +187,7 @@ uplift/
 ├── config/config.yaml    every seed, path, hyper-parameter and business assumption
 ├── docs/INTERVIEW.md     resume bullets, 2-minute pitch, likely questions
 ├── notebooks/            causal concepts explained with plots
-├── reports/              all figures and result tables
+├── reports/              all figures, result tables and the PDF report
 ├── scripts/              runnable pipeline steps
 ├── src/upliftlab/        reusable package (data, models, metrics, business, explain, ...)
 └── tests/                pytest suite, incl. a headless test of the dashboard
